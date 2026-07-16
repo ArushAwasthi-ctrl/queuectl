@@ -2,6 +2,9 @@ const { fork } = require("child_process");
 const path = require("path");
 const fs = require("fs");
 
+const { getDb } = require("../db");
+const { recoverProcessingJobs } = require("../jobStore");
+
 const PIDS_FILE = path.join(process.cwd(), ".worker-pids.json");
 
 function isProcessRunning(pid) {
@@ -16,6 +19,14 @@ function isProcessRunning(pid) {
 function workerStartCommand(options) {
   const count = parseInt(options.count, 10) || 1;
   const workerScript = path.join(__dirname, "..", "worker.js");
+
+  // Recover interrupted jobs before starting workers
+  const db = getDb();
+  const recovered = recoverProcessingJobs(db);
+
+  if (recovered > 0) {
+    console.log(`Recovered ${recovered} interrupted job(s).`);
+  }
 
   // Check existing workers
   if (fs.existsSync(PIDS_FILE)) {
