@@ -4,6 +4,7 @@ const { Command } = require("commander");
 const enqueueCommand = require("../src/commands/enqueue");
 const statusCommand = require("../src/commands/status");
 const listCommand = require("../src/commands/list");
+const configCommand = require("../src/commands/config");
 
 const program = new Command();
 
@@ -30,6 +31,11 @@ program
   .option("--state <state>", "Filter by job state")
   .action(listCommand);
 
+program
+  .command("config [key] [value]")
+  .description("View or update configuration")
+  .action(configCommand);
+  
 const { workerStartCommand } = require("../src/commands/workerStart");
 const workerStopCommand = require("../src/commands/workerStop");
 
