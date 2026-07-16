@@ -2,6 +2,7 @@
 
 const { Command } = require('commander');
 const enqueueCommand = require('../src/commands/enqueue');
+const statusCommand = require('../src/commands/status');
 
 const program = new Command();
 
@@ -14,6 +15,10 @@ program
   .command('enqueue <jobJson>')
   .description('Add a new job to the queue. Example: queuectl enqueue \'{"id":"job1","command":"sleep 2"}\'')
   .action(enqueueCommand);
+  program
+  .command('status')
+  .description('Show queue status')
+  .action(statusCommand);
 
 const { workerStartCommand } = require('../src/commands/workerStart');
 const workerStopCommand = require('../src/commands/workerStop');
