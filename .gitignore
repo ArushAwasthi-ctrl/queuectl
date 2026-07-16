@@ -4,3 +4,4 @@ queuectl.db-wal
 queuectl.db-shm
 .worker-pids.json
 *.log
+worker-*.log

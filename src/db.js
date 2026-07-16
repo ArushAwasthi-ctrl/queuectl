@@ -5,22 +5,12 @@ const DB_PATH = path.join(process.cwd(), 'queuectl.db');
 
 let dbInstance = null;
 
-/**
- * Returns a singleton SQLite connection, creating the schema on first open.
- * Each worker is its own OS process (per our fork() model), so each
- * process gets exactly one connection to the shared file.
- */
 function getDb() {
   if (dbInstance) return dbInstance;
 
   dbInstance = new Database(DB_PATH);
-
-  // WAL mode: lets reads and writes coexist better across multiple
-  // processes hitting the same file concurrently.
   dbInstance.pragma('journal_mode = WAL');
 
-  // If the db is momentarily locked by another process's write,
-  // wait up to 5s instead of throwing immediately.
   dbInstance.pragma('busy_timeout = 5000');
 
   dbInstance.exec(`
