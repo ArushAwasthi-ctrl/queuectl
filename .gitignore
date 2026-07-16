@@ -1,0 +1,6 @@
+node_modules/
+queuectl.db
+queuectl.db-wal
+queuectl.db-shm
+.worker-pids.json
+*.log
