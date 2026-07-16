@@ -126,6 +126,14 @@ function retryDeadJob(db, jobId) {
 
   return getJobById(db, jobId);
 }
+function recoverProcessingJobs(db) {
+  db.prepare(`
+    UPDATE jobs
+    SET state='pending',
+        worker_id=NULL
+    WHERE state='processing'
+  `).run();
+}
 
 module.exports = {
   enqueueJob,
@@ -139,4 +147,5 @@ module.exports = {
   retryDeadJob,
   getConfigValue,
   setConfigValue,
+  recoverProcessingJobs
 };
