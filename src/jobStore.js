@@ -44,11 +44,11 @@ function claimNextJob(db, workerId) {
        SET state = 'processing', worker_id = ?, updated_at = ?
        WHERE id = (
          SELECT id FROM jobs
-         WHERE state = 'pending' AND next_run_at <= ?
+         WHERE state IN ('pending', 'failed') AND next_run_at <= ?
          ORDER BY created_at ASC
          LIMIT 1
        )
-       AND state = 'pending'`
+       AND state IN ('pending', 'failed')`
     )
     .run(workerId, timestamp, timestamp);
 
@@ -84,11 +84,11 @@ function handleJobFailure(db, job, errorMessage) {
 
   db.prepare(
     `UPDATE jobs
-     SET state = 'pending', attempts = ?, next_run_at = ?, last_error = ?, updated_at = ?
+     SET state = 'failed', attempts = ?, next_run_at = ?, last_error = ?, updated_at = ?
      WHERE id = ?`
   ).run(newAttempts, nextRunAt, errorMessage, timestamp, job.id);
 
-  return 'pending';
+  return 'failed';
 }
 
 function listJobs(db, state) {
@@ -103,7 +103,7 @@ function getStatusSummary(db) {
     .prepare(`SELECT state, COUNT(*) as count FROM jobs GROUP BY state`)
     .all();
 
-  const summary = { pending: 0, processing: 0, completed: 0, dead: 0 };
+  const summary = { pending: 0, processing: 0, completed: 0, failed: 0, dead: 0 };
   for (const row of counts) {
     summary[row.state] = row.count;
   }

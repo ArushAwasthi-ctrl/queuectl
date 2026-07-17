@@ -7,7 +7,7 @@
     "queuectl": "./bin/queuectl.js"
   },
   "scripts": {
-    "test": "node --test test/"
+    "test": "node --test"
   },
   "dependencies": {
     "better-sqlite3": "^11.3.0",

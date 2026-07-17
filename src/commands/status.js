@@ -28,6 +28,7 @@ function statusCommand() {
   console.log(`Pending     : ${summary.pending}`);
   console.log(`Processing  : ${summary.processing}`);
   console.log(`Completed   : ${summary.completed}`);
+  console.log(`Failed      : ${summary.failed}`);
   console.log(`Dead        : ${summary.dead}`);
 }
 

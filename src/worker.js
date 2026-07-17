@@ -5,6 +5,7 @@ const { claimNextJob, markCompleted, handleJobFailure } = require('./jobStore');
 const { runCommand } = require('./executor');
 
 const POLL_INTERVAL_MS = 300;
+const STOP_FILE = path.join(process.cwd(), '.worker-stop.json');
 
 const workerIdArg = process.argv.find((a) => a.startsWith('--worker-id='));
 const workerId = workerIdArg ? workerIdArg.split('=')[1] : `worker-${process.pid}`;
@@ -16,6 +17,12 @@ function log(message) {
 }
 
 let running = true;
+
+function checkStopFile() {
+  if (fs.existsSync(STOP_FILE)) {
+    running = false;
+  }
+}
 
 process.on('SIGTERM', () => { running = false; });
 process.on('SIGINT', () => { running = false; });
@@ -33,6 +40,7 @@ async function loop() {
 
     if (!job) {
       await sleep(POLL_INTERVAL_MS);
+      checkStopFile();
       continue;
     }
 
@@ -46,10 +54,14 @@ async function loop() {
       const newState = handleJobFailure(db, job, result.error);
       log(`[${workerId}] job ${job.id} failed (${result.error}) -> ${newState}`);
     }
+
+    checkStopFile();
   }
 
   log(`[${workerId}] shutting down gracefully`);
   closeDb();
+  // Clean up stop file
+  try { fs.unlinkSync(STOP_FILE); } catch {}
   process.exit(0);
 }
 
