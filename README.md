@@ -195,4 +195,4 @@ queuectl/
 
 ## Demo
 
-A video demonstration is available at: [Demo Link](https://drive.google.com/drive/folders/1pW2GqhCzRiFEnrhm6vF9BTZJ5yVoRO6E?usp=drive_link)
+A video demonstration is available at: [Demo Link] (https://drive.google.com/file/d/1nfaQDSy3LtYWfiS9pMILcCQLq702QpYO/view?usp=sharing)
