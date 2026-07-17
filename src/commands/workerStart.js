@@ -66,7 +66,7 @@ function workerStartCommand(options) {
       stdio: "ignore",
     });
 
-    pids.push({
+pids.push({
       pid: child.pid,
       workerId,
     });
